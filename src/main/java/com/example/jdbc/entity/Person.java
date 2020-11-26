@@ -18,7 +18,7 @@ import lombok.Setter;
 @JdbcTable("person")
 public class Person {
 
-    public Person(Long id, String name, String obs, LocalDate insert, Long number, Integer integer, int intnum,
+    public Person(Long id, String name, String obs, LocalDate insert, Long number, Integer integer, Integer intnum,
             LocalDateTime datetime) {
         this.id = id;
         this.name = name;
@@ -29,7 +29,6 @@ public class Person {
         this.intnum = intnum;
         this.datetime = datetime;
     }
-
 
     @JdbcIdentity("id")
     private Long id;
@@ -57,6 +56,12 @@ public class Person {
 
     @JdbcFkIdentity("id_contact")
     private Contact contact;
+
+    @JdbcFkIdentity("id_contact_2")
+    private Contact  contact2;
+
+
+
 
 
 }

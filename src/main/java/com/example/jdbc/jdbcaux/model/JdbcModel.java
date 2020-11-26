@@ -12,6 +12,7 @@ public class JdbcModel {
     private String nameIdentity;
     private Object valueIdentity;
 
+
     public JdbcModel addParam(String nameColumn, Object obj){
         if( values == null ){ 
             values = new LinkedHashMap<String,Object>();

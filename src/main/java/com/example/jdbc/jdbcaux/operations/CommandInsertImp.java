@@ -9,6 +9,9 @@ import com.example.jdbc.jdbcaux.annotations.JdbcColumn;
 import com.example.jdbc.jdbcaux.annotations.JdbcFkIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcTable;
+import com.example.jdbc.jdbcaux.model.Command;
+import com.example.jdbc.jdbcaux.model.CommandAux;
+import com.example.jdbc.jdbcaux.model.DataBase;
 import com.example.jdbc.jdbcaux.model.JdbcModel;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,7 +21,7 @@ public class CommandInsertImp extends CommandAux implements Command {
 
     @Override
     public void chekingAnnotations(Object entity) throws Exception {
-       genericChekingAnnotations(entity);
+       genericCheckingAnnotations(entity);
     }
 
     @Override

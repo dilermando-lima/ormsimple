@@ -9,6 +9,9 @@ import com.example.jdbc.jdbcaux.annotations.JdbcColumn;
 import com.example.jdbc.jdbcaux.annotations.JdbcFkIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcTable;
+import com.example.jdbc.jdbcaux.model.Command;
+import com.example.jdbc.jdbcaux.model.CommandAux;
+import com.example.jdbc.jdbcaux.model.DataBase;
 import com.example.jdbc.jdbcaux.model.JdbcModel;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,7 +20,7 @@ public class CommandSelectByIDImp extends CommandAux implements Command {
 
     @Override
     public void chekingAnnotations(Object entity) throws Exception {   
-        genericChekingAnnotations(entity);
+        genericCheckingAnnotations(entity);
     }
 
     @Override
@@ -32,6 +35,7 @@ public class CommandSelectByIDImp extends CommandAux implements Command {
             if(  f.isAnnotationPresent(JdbcIdentity.class) ){
                 f.setAccessible(true);
                 jdbcModel.addParamIdentity(f.getAnnotation(JdbcIdentity.class).value() , f.get(entity));
+                jdbcModel.addParam(f.getAnnotation(JdbcIdentity.class).value() , f.get(entity));
             }else if (f.isAnnotationPresent(JdbcColumn.class)) {
                 f.setAccessible(true);
                 jdbcModel.addParam(f.getAnnotation(JdbcColumn.class).value() , f.get(entity));
@@ -63,6 +67,7 @@ public class CommandSelectByIDImp extends CommandAux implements Command {
         
         if( dataBase == DataBase.MY_SQL ){
            
+      
             return String.format( " select %s  from %s where %s = ?" , 
             jdbcModel.getValues().entrySet().stream().map( e -> "`" + e.getKey() + "`" ).collect( Collectors.joining(",")),
             jdbcModel.getTableName(), 
@@ -83,6 +88,7 @@ public class CommandSelectByIDImp extends CommandAux implements Command {
     @Override
     public <T> T doCommand(JdbcModel jdbcModel, JdbcTemplate jdbcTemplate, Class<T> typeReturn) throws Exception {
  
+
         List<Map<String, Object>> listMapReturn = jdbcTemplate.queryForList(jdbcModel.getCommandBuilt(),  new Object[] {jdbcModel.getValueIdentity()}  );
 
         if( listMapReturn == null || listMapReturn.isEmpty() ) return typeReturn.cast( null );
