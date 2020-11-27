@@ -88,12 +88,9 @@ public class CommandSelectByIDImp extends CommandAux implements Command {
     @Override
     public <T> T doCommand(JdbcModel jdbcModel, JdbcTemplate jdbcTemplate, Class<T> typeReturn) throws Exception {
  
-
         List<Map<String, Object>> listMapReturn = jdbcTemplate.queryForList(jdbcModel.getCommandBuilt(),  new Object[] {jdbcModel.getValueIdentity()}  );
 
         if( listMapReturn == null || listMapReturn.isEmpty() ) return typeReturn.cast( null );
-
-        listMapReturn.get(0);
 
         return getObjFromMap(listMapReturn.get(0), typeReturn);
     }

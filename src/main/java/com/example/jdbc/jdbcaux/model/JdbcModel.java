@@ -13,11 +13,12 @@ public class JdbcModel {
     private Object valueIdentity;
 
 
+    public JdbcModel() {
+        values = new LinkedHashMap<String,Object>();
+        positions = new LinkedHashMap<String,Integer>();
+    }
+    
     public JdbcModel addParam(String nameColumn, Object obj){
-        if( values == null ){ 
-            values = new LinkedHashMap<String,Object>();
-            positions = new LinkedHashMap<String,Integer>();
-        } 
         values.put(nameColumn  ,  obj);
         positions.put(nameColumn, values.size());
         return this;
@@ -69,6 +70,8 @@ public class JdbcModel {
     public void setValueIdentity(Object valueIdentity) {
         this.valueIdentity = valueIdentity;
     }
+
+
 
 
 }

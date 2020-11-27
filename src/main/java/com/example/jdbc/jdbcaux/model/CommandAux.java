@@ -8,12 +8,50 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import com.example.jdbc.jdbcaux.annotations.JdbcColumn;
+import com.example.jdbc.jdbcaux.annotations.JdbcColumnSelect;
 import com.example.jdbc.jdbcaux.annotations.JdbcFkIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcTable;
 
 public abstract class CommandAux {
     
+
+    protected void genericCheckingAnnotationsSelect(Object entity) throws Exception {
+        if (entity == null)
+            throw new NullPointerException("entity is null on inserting");
+        if (!entity.getClass().isAnnotationPresent(JdbcTable.class))
+            throw new Exception( String.format("entity %s has no @JdbcTable.class",entity.getClass()));
+
+        Field[] fields = entity.getClass().getDeclaredFields();
+
+        boolean hasAtLeastOneJdbcColumnSelect = false;
+
+        for (Field f : fields) {
+            if( f.isAnnotationPresent(JdbcColumnSelect.class)  ){
+            
+                if( 
+                    !f.getType().isAssignableFrom(LocalDate.class) &&
+                    !f.getType().isAssignableFrom(Double.class) &&
+                    !f.getType().isAssignableFrom(Float.class) &&
+                    !f.getType().isAssignableFrom(String.class) &&
+                    !f.getType().isAssignableFrom(Integer.class) &&
+                    !f.getType().isAssignableFrom(Long.class) &&
+                    !f.getType().isAssignableFrom(LocalDateTime.class)
+                      )
+                throw new Exception( String.format("@JdbcColumnSelect.class on entity %s can be used only in LocalDate, LocalDateTime, Float, String, Integer e Long Type attributes",entity.getClass()));
+
+                hasAtLeastOneJdbcColumnSelect = true;
+
+            }
+        }
+
+
+        if( !hasAtLeastOneJdbcColumnSelect ) 
+        throw new Exception( String.format("%s must contain at least one attribute with @JdbcColumnSelect.class",entity.getClass()));
+
+        
+    }
+
     protected void genericCheckingAnnotations(Object entity) throws Exception {
        
       
@@ -193,5 +231,45 @@ public abstract class CommandAux {
 
         return classToReturn.cast(obj);
     }
+
+
+
+    protected <T> T getSelectObjFromMap(Map<String, Object> mapObject , Class<T> classToReturn) throws Exception {
+
+        Object obj = classToReturn.getDeclaredConstructor().newInstance();
+
+        for (Map.Entry<String,Object> entry : mapObject.entrySet()) {
+                if( entry.getValue() != null  ){
+                                                
+                        Field[] field = obj.getClass().getDeclaredFields();
+
+                        for (Field f : field) {
+                
+                                    f.setAccessible(true);
+                                    if(  f.isAnnotationPresent(JdbcColumnSelect.class) &&  entry.getKey().equals(f.getAnnotation(JdbcColumnSelect.class).value())  ){
+                                        if( f.getType().isAssignableFrom(LocalDate.class)   ){
+                                            f.set(obj,  ((Date) entry.getValue()).toLocalDate() );
+                                        }else if ( f.getType().isAssignableFrom(LocalDateTime.class) ){
+                                            f.set(obj,  ((Timestamp) entry.getValue()).toLocalDateTime() );
+                                        }else if ( f.getType().isAssignableFrom(Double.class) ){
+                                            f.set(obj,  Double.valueOf( String.valueOf( entry.getValue()) ));
+                                        }else if ( f.getType().isAssignableFrom(Float.class) ){
+                                            f.set(obj,  Float.valueOf( String.valueOf( entry.getValue()) ));
+                                        }else if ( f.getType().isAssignableFrom(String.class) ){
+                                            f.set(obj, String.valueOf(entry.getValue())  );
+                                        }else if ( f.getType().isAssignableFrom(Integer.class) ){
+                                            f.set(obj,  Integer.valueOf( String.valueOf( entry.getValue()) ));
+                                        }else if ( f.getType().isAssignableFrom(Long.class) ){
+                                            f.set(obj,  Long.valueOf( String.valueOf( entry.getValue()) ));
+                                        }
+                                    }
+                            
+                        }
+                    }
+        }
+
+        return classToReturn.cast(obj);
+    }
+
 
 }

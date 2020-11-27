@@ -6,8 +6,10 @@ import java.util.Map;
 import com.example.jdbc.jdbcaux.model.Command;
 import com.example.jdbc.jdbcaux.model.CommandBatch;
 import com.example.jdbc.jdbcaux.model.CommandPatch;
+import com.example.jdbc.jdbcaux.model.CommandSelect;
 import com.example.jdbc.jdbcaux.model.JdbcModel;
 import com.example.jdbc.jdbcaux.model.JdbcModelBatch;
+import com.example.jdbc.jdbcaux.model.Select;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -32,6 +34,17 @@ public class JdbcExec {
         JdbcModel jdbcModel = command.prepareValues(entity, mapValues);
 
         jdbcModel.setCommandBuilt( command.buildCommand(jdbcModel, database) );    
+
+        return  command.doCommand(jdbcModel, jdbcTemplate , classReturn);
+    }
+
+    private static <T> List<T> execSelect(CommandSelect command, Select select , JdbcTemplate jdbcTemplate, int database , Class<T> classReturn )  throws Exception {
+       
+        command.chekingAnnotationsSelect(classReturn);
+
+        JdbcModel jdbcModel = command.prepareValues(select);
+
+        jdbcModel.setCommandBuilt( command.buildCommand(select, database) );    
 
         return  command.doCommand(jdbcModel, jdbcTemplate , classReturn);
     }
@@ -64,6 +77,10 @@ public class JdbcExec {
 
     public static <T> T selectById( Object entityWithId , JdbcTemplate jdbcTemplate, int database, Class<T> classReturn ) throws Exception {
         return  exec(new CommandSelectByIDImp() , entityWithId, jdbcTemplate, database, classReturn);
+    }
+
+    public static <T> List<T> select( Select select , JdbcTemplate jdbcTemplate, int database, Class<T> classReturn ) throws Exception {
+        return  execSelect(new CommandSelectImp(), select, jdbcTemplate, database, classReturn);
     }
 
     public static Long delete( Object entityWithId , JdbcTemplate jdbcTemplate, int database ) throws Exception {

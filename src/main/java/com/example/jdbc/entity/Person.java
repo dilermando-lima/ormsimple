@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.example.jdbc.jdbcaux.annotations.JdbcColumn;
+import com.example.jdbc.jdbcaux.annotations.JdbcColumnSelect;
 import com.example.jdbc.jdbcaux.annotations.JdbcFkIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcTable;
@@ -18,6 +19,12 @@ import lombok.Setter;
 @JdbcTable("person")
 public class Person {
 
+
+    @Override
+    public String toString() {
+        return String.format("\n[ id: %s ,  name: %s  " , this.id , this.name );
+    }
+
     public Person(Long id, String name, String obs, LocalDate insert, Long number, Integer integer, Integer intnum,
             LocalDateTime datetime) {
         this.id = id;
@@ -30,15 +37,19 @@ public class Person {
         this.datetime = datetime;
     }
 
+    @JdbcColumnSelect("id")
     @JdbcIdentity("id")
     private Long id;
 
+    @JdbcColumnSelect("name")
     @JdbcColumn("name")
     private String name;
 
+    @JdbcColumnSelect("obs")
     @JdbcColumn("obs")
     private String obs;
 
+    @JdbcColumnSelect("insert")
     @JdbcColumn("insert")
     private LocalDate insert;
 

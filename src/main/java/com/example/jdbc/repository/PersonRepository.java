@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.example.jdbc.entity.Person;
 import com.example.jdbc.jdbcaux.model.DataBase;
+import com.example.jdbc.jdbcaux.model.Select;
 import com.example.jdbc.jdbcaux.operations.JdbcExec;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,10 @@ public class PersonRepository{
      public Person getById(Person person) throws Exception {
         return JdbcExec.selectById(person, jdbcTemplate, DataBase.MY_SQL, Person.class);
      }
+
+     public List<Person> select (Select select ) throws Exception {
+      return JdbcExec.select(select, jdbcTemplate,  DataBase.MY_SQL, Person.class);
+   }
 
      public Long delete(Person person) throws Exception {
       return JdbcExec.delete(person, jdbcTemplate, DataBase.MY_SQL);
