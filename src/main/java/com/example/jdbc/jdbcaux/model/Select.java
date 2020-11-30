@@ -11,7 +11,20 @@ public class Select {
     private boolean containsWhere;
 
     private String textSequence;
-    private String selectBuilt;
+    private String built;
+
+    private String errorMsg;
+
+    private String cols;
+    private String table;
+    private String inners;
+    private String where;
+    private String orderBy;
+    private String pagination;
+
+
+
+
     private List<Object> listValues;
     int numPage;
     int pageSize;
@@ -20,7 +33,18 @@ public class Select {
         this.containsWhere = false;
         listValues = new LinkedList<Object>();
         textSequence = "s";
-        selectBuilt = " select ";
+
+        errorMsg = null;
+
+        built = "";
+
+        cols = "";
+        table = "";
+        inners = "";
+        where = "";
+        orderBy = "";
+        pagination = "";
+
     }
 
     public Select(int numPage , int pageSize) {
@@ -29,14 +53,10 @@ public class Select {
         this.pageSize = pageSize;
     }
 
-    public Select() {
-        init();
-        this.numPage = 0;
-        this.pageSize = 15;
-    }
-
 
     public String build(int dataBase) throws Exception {
+
+            if( errorMsg != null )  throw new Exception(errorMsg);
 
             if( !textSequence.equals("scfiwo") && 
             !textSequence.equals("scfo") && 
@@ -45,109 +65,170 @@ public class Select {
                 throw new Exception(" the order of calling methods to build select has been incorrect ");
             }
 
-            return ( selectBuilt + pagination(this.numPage, this.pageSize, dataBase) ).replace("  ", " ");
+            setPagination(numPage, pageSize, dataBase);
+
+            if( cols.trim().endsWith(",") ) cols = cols.trim().substring(0, cols.trim().length() - 1);
+
+            if( containsWhere  ) where = " where " + where;
+
+            built+= String.format(" select %s from %s %s %s %s %s",cols,table, inners, where, orderBy, pagination );
+
+            return built.replace("  ", " ");
            
     }
 
 
     public Select col(String col){
+        
+        if( col == null){  errorMsg = "Cols cannot be null on Select.col()"; return this;}
 
-         if( !textSequence.contains("c") ) textSequence+= "c";
+        if( !textSequence.contains("c") ) textSequence+= "c";
 
-         selectBuilt+= String.format(" %s,",col);
-         return this;
+        if( col.trim().endsWith(",")  ) col = col.trim().substring(0, col.trim().length() - 1);
+
+        cols+= String.format(" %s, ",col);
+        return this;
     }
 
-    public Select from(String table){
-        
-        textSequence+="f";
+    public Select col(String... col){
+        if( col == null ) return this;
+        for (String string : col) {
+            col(string);
+        }
+        return this;
+   }
 
-        if( selectBuilt.endsWith(",") ) selectBuilt = selectBuilt.substring(0, selectBuilt.length() - 1);
-        selectBuilt+= String.format(" from %s ",table);
+
+
+    public Select from(String table){
+        if( table == null )  {  errorMsg = "Table cannot be null on Select.from()"; return this;}
+
+        textSequence+="f";
+        this.table = table;
         return this;
     }
 
     public Select innerJoin(String tableJoin, String colLeft, String colRight){
-       
+        
+        if( tableJoin == null || colLeft == null || colRight == null ) 
+        {  errorMsg = "TableJoin, ColLeft or ColRight cannot be null on Select.innerJoin()"; return this;}
+
+
         if( !textSequence.contains("i") ) textSequence+= "i";
 
-        selectBuilt+=  String.format(" inner join %s on %s = %s ",tableJoin, colLeft,colRight);
+        inners+=  String.format(" inner join %s on %s = %s ",tableJoin, colLeft,colRight);
         return this;
     }
 
     public Select leftJoin(String tableJoin, String colLeft, String colRight){
+        
+        if( tableJoin == null || colLeft == null || colRight == null ) 
+        {  errorMsg = "TableJoin, ColLeft or ColRight cannot be null on Select.leftJoin()"; return this;}
+
+
         if( !textSequence.contains("i") ) textSequence+= "i";
 
-        selectBuilt+=  String.format(" left join %s on %s = %s ",tableJoin, colLeft,colRight);
+        inners+=  String.format(" left join %s on %s = %s ",tableJoin, colLeft,colRight);
         return this;
     }
 
+
+    public Select andWhere(String whereand){
+        return andWhere(whereand);
+    }
 
     public Select andWhere(String whereand ,   Object... ObjParam){
 
+        if( whereand == null  ) 
+        {  errorMsg = "whereand cannot be null on Select.andWhere()"; return this;}
+
         if( !textSequence.contains("w") ) textSequence+= "w";
-
-
-        if( !containsWhere ) {
-              selectBuilt+= " where";
-              containsWhere = true;
-        }else if( !selectBuilt.endsWith(" and") ){
-            selectBuilt+= " and";
-        }
-
-        selectBuilt+= whereand;
-
-        for (Object object : ObjParam) {
-            listValues.add(object);
-        }
-        return this;
-    }
-
-    public Select orWhere(String whereor ,   Object... ObjParam){
-        if( !textSequence.contains("w") ) textSequence+= "w";
-
-        if( !containsWhere ) {
-            selectBuilt+= " where";
-            containsWhere = true;
-        }else if( !selectBuilt.endsWith(" or") ){
-            selectBuilt+= " or";
-        }
-
-        selectBuilt+= whereor;
-
-
-        for (Object object : ObjParam) {
-            listValues.add(object);
-        }
-        return this;
-    }
-
-    public Select orderBy(String col, String order ){
 
        
 
-        if( !textSequence.contains("o") ) textSequence+= "o";
-        
-        
-        if( !selectBuilt.contains(" order by")){
-            selectBuilt+= " order by";
+        if(   !containsWhere  ){
+            containsWhere = true;
+            where+= " " + whereand + " ";
+        }else if( !where.trim().endsWith("and") ){
+            where+= " and " + whereand + " ";
         }else{
-            selectBuilt+= ", ";
+            where+= " " + whereand + " ";
         }
 
-        selectBuilt+= String.format(" %s %s ", col, order);
+        if(  ObjParam != null  ){
+            for (Object object : ObjParam) {
+                listValues.add(object);
+            }
+        }
+       
+        return this;
+    }
+
+    public Select orWhere(String whereand){
+        return orWhere(whereand);
+    }
+    
+    public Select orWhere(String whereor ,   Object... ObjParam){
+
+        if( whereor == null  ) 
+        {  errorMsg = "whereor cannot be null on Select.orWhere()"; return this;}
+
+        if( !textSequence.contains("w") ) textSequence+= "w";
+
+  
+    
+        
+        if(   !containsWhere  ){
+            containsWhere = true;
+            where+= " " + whereor + " ";
+        }if( !where.trim().endsWith("or") ){
+            where+= " or " + whereor + " ";
+        }else{
+            where+= " " + whereor + " ";
+        }
+
+        if(  ObjParam != null  ){
+            for (Object object : ObjParam) {
+                listValues.add(object);
+            }
+        }
         return this;
     }
 
 
-    public String pagination(int numPage, int pageSize, int dataBase){
-        if( dataBase == DataBase.MY_SQL ){
-            return String.format(" limit %d  offset %d ", pageSize, numPage * pageSize );
-        }else if (  dataBase == DataBase.SQL_SERVER ){
-            return String.format(" offset %d  rows fetch next %d rows only ", numPage, pageSize );
+    public Select orderBy(String col, String order ){
+
+        if( col == null ||  order == null  ) 
+        {  errorMsg = "col or order cannot be null on Select.orderBy()"; return this;}
+
+    
+        if( !textSequence.contains("o") ) textSequence+= "o";
+        
+        
+        if( !orderBy.contains("order by")){
+            orderBy+= " order by ";
         }else{
-            return "";
+            orderBy+= " , ";
         }
+
+        orderBy+= String.format(" %s %s ", col, order);
+        return this;
+    }
+
+
+    private void setPagination(int numPage, int pageSize, int dataBase){
+
+        if( pageSize == 0  )
+        {  errorMsg = "pageSize cannot be ZERO on Select.setPagination()"; return;}
+
+        if( dataBase == DataBase.MY_SQL ){
+            pagination = String.format(" limit %d  offset %d ", pageSize, numPage * pageSize );
+        }else if (  dataBase == DataBase.SQL_SERVER ){
+            pagination = String.format(" offset %d  rows fetch next %d rows only ", numPage, pageSize );
+        }else{
+             errorMsg = "int dataBase not found " + this.getClass() ; return;
+        }
+     
     }
 
     public List<Object> getListValues() {

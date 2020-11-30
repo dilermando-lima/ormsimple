@@ -1,6 +1,7 @@
 package com.example.jdbc.entity;
 
 import com.example.jdbc.jdbcaux.annotations.JdbcColumn;
+import com.example.jdbc.jdbcaux.annotations.JdbcFkIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcTable;
 
@@ -14,15 +15,6 @@ import lombok.Setter;
 @JdbcTable("contact")
 public class Contact {
 
-
-    
-    public Contact(Long id, String email, String phone) {
-        this.id = id;
-        this.email = email;
-        this.phone = phone;
-    }
-
-
    @JdbcIdentity("id")
     private Long id;
 
@@ -32,6 +24,28 @@ public class Contact {
     @JdbcColumn("phone")
     private String phone;
 
+    @JdbcFkIdentity("id_person")
+    private Person person;
+
+    @Override
+    public String toString() {
+        return String.format("{ id: %s, email: %s , phone: %s, id_person: %s } ", this.id, this.email, this.phone, this.person);
+    }
+
+
+    public Contact(Long id) {
+        this.id = id;
+    }
+
+    public Contact(Long id, String email, String phone, Person person) {
+        this.id = id;
+        this.email = email;
+        this.phone = phone;
+        this.person = person;
+    }
+
+    
+    
 
 
 

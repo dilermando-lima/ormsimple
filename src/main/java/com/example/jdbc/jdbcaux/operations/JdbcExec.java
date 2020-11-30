@@ -46,6 +46,8 @@ public class JdbcExec {
 
         jdbcModel.setCommandBuilt( command.buildCommand(select, database) );    
 
+        System.out.println( jdbcModel.getCommandBuilt() );
+
         return  command.doCommand(jdbcModel, jdbcTemplate , classReturn);
     }
 
@@ -63,16 +65,16 @@ public class JdbcExec {
     }
 
 
-    public static Long insert( Object entity , JdbcTemplate jdbcTemplate, int database) throws Exception {
-        return  exec(new CommandInsertImp() , entity, jdbcTemplate, database, Long.class);
+    public static <T> T  insert( Object entity , JdbcTemplate jdbcTemplate, int database,  Class<T> classReturn) throws Exception {
+        return  exec(new CommandInsertImp() , entity, jdbcTemplate, database, classReturn);
     }
 
-    public static Long update( Object entity , JdbcTemplate jdbcTemplate, int database) throws Exception {
-        return  exec(new CommandUpdateImp() , entity, jdbcTemplate, database, Long.class);
+    public static <T> T update( Object entity , JdbcTemplate jdbcTemplate, int database, Class<T> classReturn) throws Exception {
+        return  exec(new CommandUpdateImp() , entity, jdbcTemplate, database, classReturn);
     }
 
-    public static Long updatePatch( Object entityWithId , Map<String,Object> mapValues,  JdbcTemplate jdbcTemplate,  int database) throws Exception {
-        return  execPatch(new CommandUpdatePatchImp() , entityWithId ,mapValues ,  jdbcTemplate, database, Long.class);
+    public static <T> T updatePatch( Object entityWithId , Map<String,Object> mapValues,  JdbcTemplate jdbcTemplate,  int database, Class<T> classReturn ) throws Exception {
+        return  execPatch(new CommandUpdatePatchImp() , entityWithId ,mapValues ,  jdbcTemplate, database, classReturn);
     }
 
     public static <T> T selectById( Object entityWithId , JdbcTemplate jdbcTemplate, int database, Class<T> classReturn ) throws Exception {
@@ -83,12 +85,16 @@ public class JdbcExec {
         return  execSelect(new CommandSelectImp(), select, jdbcTemplate, database, classReturn);
     }
 
-    public static Long delete( Object entityWithId , JdbcTemplate jdbcTemplate, int database ) throws Exception {
-        return  exec(new CommandDeleteImp() , entityWithId, jdbcTemplate, database, Long.class);
+    public static <T> T delete( Object entityWithId , JdbcTemplate jdbcTemplate, int database, Class<T> classReturn ) throws Exception {
+        return  exec(new CommandDeleteImp() , entityWithId, jdbcTemplate, database, classReturn);
     }
 
     public static List<Integer> insertBatch(List<?> entityList , JdbcTemplate jdbcTemplate, int database) throws Exception {
         return  execBatch(new CommandInsertBatchImp(), entityList,  jdbcTemplate, database);
+    }
+
+    public static List<Integer> updateBatch(List<?> entityList , JdbcTemplate jdbcTemplate, int database) throws Exception {
+        return  execBatch(new CommandUpdateBatchImp(), entityList,  jdbcTemplate, database);
     }
 
 
