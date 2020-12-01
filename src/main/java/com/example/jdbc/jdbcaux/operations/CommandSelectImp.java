@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.example.jdbc.jdbcaux.model.CommandAux;
 import com.example.jdbc.jdbcaux.model.CommandSelect;
+import com.example.jdbc.jdbcaux.model.CommandUtils;
+import com.example.jdbc.jdbcaux.model.DataBase;
 import com.example.jdbc.jdbcaux.model.JdbcModel;
 import com.example.jdbc.jdbcaux.model.Select;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class CommandSelectImp extends CommandAux implements CommandSelect {
+public class CommandSelectImp extends CommandUtils implements CommandSelect {
 
     @Override
     public void chekingAnnotationsSelect(Class<?> classReturn) throws Exception {   
@@ -30,7 +31,7 @@ public class CommandSelectImp extends CommandAux implements CommandSelect {
     }
 
     @Override
-    public String buildCommand(Select select, int dataBase) throws Exception {
+    public String buildCommand(Select select,  Class<? extends DataBase> dataBase) throws Exception {
 
         return select.build(dataBase);
     }

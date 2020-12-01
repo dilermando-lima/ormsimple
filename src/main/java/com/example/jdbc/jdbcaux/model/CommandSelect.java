@@ -10,7 +10,7 @@ public interface CommandSelect {
 
         public JdbcModel prepareValues(Select select) throws Exception;
 
-        public  String  buildCommand(Select select, int dataBase) throws Exception;
+        public  String  buildCommand(Select select,  Class<? extends DataBase> dataBase) throws Exception;
 
         public <T> List<T>  doCommand(JdbcModel jdbcModel, JdbcTemplate jdbcTemplate, Class<T> typeReturn ) throws Exception;
 

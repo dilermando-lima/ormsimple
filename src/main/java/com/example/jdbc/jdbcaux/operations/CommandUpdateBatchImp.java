@@ -12,16 +12,18 @@ import com.example.jdbc.jdbcaux.annotations.JdbcColumn;
 import com.example.jdbc.jdbcaux.annotations.JdbcFkIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcTable;
-import com.example.jdbc.jdbcaux.model.CommandAux;
 import com.example.jdbc.jdbcaux.model.CommandBatch;
+import com.example.jdbc.jdbcaux.model.CommandUtils;
 import com.example.jdbc.jdbcaux.model.DataBase;
+import com.example.jdbc.jdbcaux.model.DataBaseMySql;
+import com.example.jdbc.jdbcaux.model.DataBaseSqlServer;
 import com.example.jdbc.jdbcaux.model.JdbcModel;
 import com.example.jdbc.jdbcaux.model.JdbcModelBatch;
 
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class CommandUpdateBatchImp extends CommandAux implements CommandBatch {
+public class CommandUpdateBatchImp extends CommandUtils implements CommandBatch {
 
     @Override
     public void chekingAnnotations( List<?>   entityList) throws Exception {
@@ -78,17 +80,17 @@ public class CommandUpdateBatchImp extends CommandAux implements CommandBatch {
     }
 
     @Override
-    public String buildCommand(JdbcModelBatch jdbcModelBatch, int dataBase) throws Exception {
+    public String buildCommand(JdbcModelBatch jdbcModelBatch,  Class<? extends DataBase> dataBase) throws Exception {
     
         
-        if( dataBase == DataBase.MY_SQL ){
+        if( dataBase.isAssignableFrom(DataBaseMySql.class) ){
            
             return String.format( " update %s  set %s where %s = ?" , 
             jdbcModelBatch.getListJdbcModel().get(0).getTableName(), 
             jdbcModelBatch.getListJdbcModel().get(0).getValues().entrySet().stream().map( e ->  "`" + e.getKey() + "` = ? " ).collect( Collectors.joining(",")) , 
             jdbcModelBatch.getListJdbcModel().get(0).getNameIdentity() );
 
-        }else if( dataBase == DataBase.SQL_SERVER ){
+        }else if( dataBase.isAssignableFrom(DataBaseSqlServer.class)  ){
            
             return String.format( " update %s  set %s where %s = ?" , 
             jdbcModelBatch.getListJdbcModel().get(0).getTableName(), 

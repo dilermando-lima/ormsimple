@@ -13,7 +13,7 @@ import com.example.jdbc.jdbcaux.annotations.JdbcFkIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcTable;
 
-public abstract class CommandAux {
+public abstract class CommandUtils {
     
 
     protected void genericCheckingAnnotationsSelect(Object entity) throws Exception {

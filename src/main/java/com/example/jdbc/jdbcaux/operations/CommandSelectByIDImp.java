@@ -10,13 +10,15 @@ import com.example.jdbc.jdbcaux.annotations.JdbcFkIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcTable;
 import com.example.jdbc.jdbcaux.model.Command;
-import com.example.jdbc.jdbcaux.model.CommandAux;
+import com.example.jdbc.jdbcaux.model.CommandUtils;
 import com.example.jdbc.jdbcaux.model.DataBase;
+import com.example.jdbc.jdbcaux.model.DataBaseMySql;
+import com.example.jdbc.jdbcaux.model.DataBaseSqlServer;
 import com.example.jdbc.jdbcaux.model.JdbcModel;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class CommandSelectByIDImp extends CommandAux implements Command {
+public class CommandSelectByIDImp extends CommandUtils implements Command {
 
     @Override
     public void chekingAnnotations(Object entity) throws Exception {   
@@ -63,9 +65,9 @@ public class CommandSelectByIDImp extends CommandAux implements Command {
     }
 
     @Override
-    public String buildCommand(JdbcModel jdbcModel, int dataBase) throws Exception {
+    public String buildCommand(JdbcModel jdbcModel,  Class<? extends DataBase> dataBase ) throws Exception {
         
-        if( dataBase == DataBase.MY_SQL ){
+        if( dataBase.isAssignableFrom(DataBaseMySql.class) ){
            
       
             return String.format( " select %s  from %s where %s = ?" , 
@@ -73,7 +75,7 @@ public class CommandSelectByIDImp extends CommandAux implements Command {
             jdbcModel.getTableName(), 
             jdbcModel.getNameIdentity() );
 
-        }else if( dataBase == DataBase.SQL_SERVER ){
+        }else if( dataBase.isAssignableFrom(DataBaseSqlServer.class)  ){
            
             return String.format( " select %s  from %s where %s = ?" , 
             jdbcModel.getValues().entrySet().stream().map( e -> "[" + e.getKey() + "]" ).collect( Collectors.joining(",")),

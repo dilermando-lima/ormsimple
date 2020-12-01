@@ -10,7 +10,7 @@ public interface CommandBatch {
 
         public void chekingAnnotations( List<?>  entityList) throws Exception;
 
-        public  String  buildCommand(JdbcModelBatch jdbcModelBatch, int dataBase) throws Exception;
+        public  String  buildCommand(JdbcModelBatch jdbcModelBatch,  Class<? extends DataBase> dataBase) throws Exception;
 
         public List<Integer> doCommand(JdbcModelBatch jdbcModelBatch, JdbcTemplate jdbcTemplate ) throws Exception;
 

@@ -5,13 +5,6 @@ import com.example.jdbc.jdbcaux.annotations.JdbcFkIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcIdentity;
 import com.example.jdbc.jdbcaux.annotations.JdbcTable;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Setter
-@Getter
-@NoArgsConstructor
 @JdbcTable("contact")
 public class Contact {
 
@@ -33,6 +26,8 @@ public class Contact {
     }
 
 
+    public Contact(){}
+
     public Contact(Long id) {
         this.id = id;
     }
@@ -41,6 +36,38 @@ public class Contact {
         this.id = id;
         this.email = email;
         this.phone = phone;
+        this.person = person;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
         this.person = person;
     }
 

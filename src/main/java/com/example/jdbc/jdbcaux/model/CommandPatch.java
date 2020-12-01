@@ -10,7 +10,7 @@ public interface CommandPatch  {
 
         public void chekingAnnotations(Object entity) throws Exception;
 
-        public  String  buildCommand(JdbcModel jdbcModel, int dataBase) throws Exception;
+        public  String  buildCommand(JdbcModel jdbcModel,  Class<? extends DataBase> dataBase) throws Exception;
 
         public <T> T doCommand(JdbcModel jdbcModel, JdbcTemplate jdbcTemplate, Class<T> typeReturn ) throws Exception;
 

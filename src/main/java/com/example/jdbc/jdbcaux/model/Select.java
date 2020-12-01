@@ -54,7 +54,7 @@ public class Select {
     }
 
 
-    public String build(int dataBase) throws Exception {
+    public String build(  Class<? extends DataBase> dataBase) throws Exception {
 
             if( errorMsg != null )  throw new Exception(errorMsg);
 
@@ -216,14 +216,14 @@ public class Select {
     }
 
 
-    private void setPagination(int numPage, int pageSize, int dataBase){
+    private void setPagination(int numPage, int pageSize,  Class<? extends DataBase> dataBase){
 
         if( pageSize == 0  )
         {  errorMsg = "pageSize cannot be ZERO on Select.setPagination()"; return;}
 
-        if( dataBase == DataBase.MY_SQL ){
+        if( dataBase.isAssignableFrom(DataBaseMySql.class) ){
             pagination = String.format(" limit %d  offset %d ", pageSize, numPage * pageSize );
-        }else if (  dataBase == DataBase.SQL_SERVER ){
+        }else if (  dataBase.isAssignableFrom(DataBaseSqlServer.class)   ){
             pagination = String.format(" offset %d  rows fetch next %d rows only ", numPage, pageSize );
         }else{
              errorMsg = "int dataBase not found " + this.getClass() ; return;
