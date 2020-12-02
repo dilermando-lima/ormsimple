@@ -62,14 +62,14 @@ We need to extend repostitories from *`com.example.jdbc.jdbcaux.repository.JdbcR
 
 ```java
 
-import com.example.jdbc.jdbcaux.model.DataBaseMySql;
-import com.example.jdbc.jdbcaux.repository.JdbcRepository;
+  import com.example.jdbc.jdbcaux.model.DataBaseMySql;
+  import com.example.jdbc.jdbcaux.repository.JdbcRepository;
 
-import org.springframework.stereotype.Component;
+  import org.springframework.stereotype.Component;
 
-@Component
-public class MyEntitynRepository extends  JdbcRepository<MyEntity,Long, DataBaseMySql>  {
-}
+  @Component
+  public class MyEntitynRepository extends  JdbcRepository<MyEntity,Long, DataBaseMySql>  {
+  }
 
 ```
 
@@ -79,7 +79,8 @@ Let's see how this work...
 #### Inserting a entity
 
 ```java
-repository.insert(new MyEntity("some name","some comments"));
+
+  repository.insert(new MyEntity("some name","some comments"));
 
 ```
 
@@ -87,8 +88,8 @@ repository.insert(new MyEntity("some name","some comments"));
 
 ```java
 
-myEntity.setId(2);
-repository.update(myEntity);
+  myEntity.setId(2);
+  repository.update(myEntity);
 
 ```
 
@@ -96,11 +97,11 @@ repository.update(myEntity);
 
 ```java
 
-    HashMap<String,Object> mapAttrToUpdate =  new HashMap<>();
-    mapAttrToUpdate.put("name", "name to update");
-    mapAttrToUpdate.put("other_attr_to_update", "value to update");
+  HashMap<String,Object> mapAttrToUpdate =  new HashMap<>();
+  mapAttrToUpdate.put("name", "name to update");
+  mapAttrToUpdate.put("other_attr_to_update", "value to update");
 
-    repository.updatePatch(new MyEntity(), mapAttrToUpdate);
+  repository.updatePatch(new MyEntity(), mapAttrToUpdate);
 
 ```
 
@@ -109,12 +110,14 @@ repository.update(myEntity);
 #### Getting by id
 
 ```java
-myEntity.setId(2);
-MyEntity = repository.getById(myEntity);
+
+  myEntity.setId(2);
+  MyEntity = repository.getById(myEntity);
 
 ```
 
 #### Simple select
+In order to bring data on select your attributes need to have *@JdbcColumnSelect("name_in_database")*
 
 ```java
 
