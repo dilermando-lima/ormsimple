@@ -11,7 +11,10 @@ public class JdbcModel {
     private String tableName;
     private String nameIdentity;
     private Object valueIdentity;
+    private String typeKey;
 
+
+    
 
     public JdbcModel() {
         values = new LinkedHashMap<String,Object>();
@@ -69,6 +72,14 @@ public class JdbcModel {
 
     public void setValueIdentity(Object valueIdentity) {
         this.valueIdentity = valueIdentity;
+    }
+
+    public String getTypeKey() {
+        return typeKey;
+    }
+
+    public void setTypeKey(String typeKey) {
+        this.typeKey = typeKey;
     }
 
 

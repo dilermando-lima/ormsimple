@@ -7,7 +7,7 @@ import com.example.jdbc.jdbcaux.repository.JdbcRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PersonRepository extends  JdbcRepository<Person,Long, DataBaseMySql>  {
+public class PersonRepository extends  JdbcRepository<Person,String, DataBaseMySql>  {
 
 
 }

@@ -12,11 +12,9 @@ import com.example.jdbc.jdbcaux.annotations.JdbcTable;
 @JdbcTable("person")
 public class Person {
 
-
-
     @JdbcColumnSelect("id")
-    @JdbcIdentity("id")
-    private Long id;
+    @JdbcIdentity( value = "id", typeKey = JdbcIdentity.NO_GENERATED_KEY)
+    private String id;
 
     @JdbcColumnSelect("name")
     @JdbcColumn("name")
@@ -38,7 +36,7 @@ public class Person {
 
     public Person(){}
 
-    public Person(Long id) {
+    public Person(String id) {
         this.id = id;
     }
 
@@ -48,11 +46,11 @@ public class Person {
         this.dateInsert = dateInsert;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

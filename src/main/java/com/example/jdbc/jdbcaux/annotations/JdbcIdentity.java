@@ -8,5 +8,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention( RetentionPolicy.RUNTIME )
 public @interface JdbcIdentity {
+
+    public final static String GENERATED_KEY = "GK";
+    public final static String NO_GENERATED_KEY = "NGK";
     String value();
+    String typeKey() default GENERATED_KEY;
 }

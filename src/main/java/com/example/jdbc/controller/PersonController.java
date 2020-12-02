@@ -26,29 +26,31 @@ public class PersonController {
     @Autowired
     private PersonRepository repository;
 
+
     @GetMapping
     public  List<Person> list() throws Exception {
-        return repository.select(new Select(0, 100).col("id","name","obs").from("person").orderBy("id", Select.DESC ));
+        return repository.select(new Select(0, 100).col("id","name","obs","date_insert").from("person").orderBy("id", Select.DESC ));
     }
 
     @GetMapping("/{id}")
-    public  Person getById(@PathVariable("id") Long id  ) throws Exception {
+    public  Person getById(@PathVariable("id") String id  ) throws Exception {
         return  repository.getById(new Person(id));
     }
 
     @PostMapping
     public  Person insert(@RequestBody Person person  ) throws Exception {
-        return  repository.getById( new Person(repository.insert(person)) );
+        var p = new Person(repository.insert(person));
+        return  repository.getById( p );
     }
 
     @PutMapping("/{id}")
-    public  Person update(@PathVariable("id") Long id, @RequestBody Person person  ) throws Exception {
+    public  Person update(@PathVariable("id") String id, @RequestBody Person person  ) throws Exception {
         person.setId(id);
         return  repository.getById( new Person(repository.update(person)) );
     }
 
     @DeleteMapping("/")
-    public  Long delete(@RequestBody Person person  ) throws Exception {
+    public  String delete(@RequestBody Person person  ) throws Exception {
         return  repository.delete(person);
     }
 

@@ -75,10 +75,15 @@ public abstract class CommandUtils {
             throw new Exception( String.format("attributes cannot be @JdbcIdentity.class and @JdbcColumn.class at the same time on entity %s",entity.getClass()));
 
             if( 
+                !f.getType().isAssignableFrom(LocalDate.class) &&
+                !f.getType().isAssignableFrom(Double.class) &&
+                !f.getType().isAssignableFrom(Float.class) &&
+                !f.getType().isAssignableFrom(String.class) &&
                 !f.getType().isAssignableFrom(Integer.class) &&
-                !f.getType().isAssignableFrom(Long.class) 
+                !f.getType().isAssignableFrom(Long.class) &&
+                !f.getType().isAssignableFrom(LocalDateTime.class)
                   )
-            throw new Exception( String.format("@JdbcIdentity.class on entity %s can be used only in Integer e Long Type attributes",entity.getClass()));
+            throw new Exception( String.format("@JdbcIdentity.class on entity %s can be used only in LocalDate, LocalDateTime, Float, String, Integer e Long Type attributes",entity.getClass()));
 
             
             
@@ -177,27 +182,12 @@ public abstract class CommandUtils {
                 
                                     f.setAccessible(true);
                                     if(  f.isAnnotationPresent(JdbcColumn.class) &&  entry.getKey().equals(f.getAnnotation(JdbcColumn.class).value())  ){
-                                        if( f.getType().isAssignableFrom(LocalDate.class)   ){
-                                            f.set(obj,  ((Date) entry.getValue()).toLocalDate() );
-                                        }else if ( f.getType().isAssignableFrom(LocalDateTime.class) ){
-                                            f.set(obj,  ((Timestamp) entry.getValue()).toLocalDateTime() );
-                                        }else if ( f.getType().isAssignableFrom(Double.class) ){
-                                            f.set(obj,  Double.valueOf( String.valueOf( entry.getValue()) ));
-                                        }else if ( f.getType().isAssignableFrom(Float.class) ){
-                                            f.set(obj,  Float.valueOf( String.valueOf( entry.getValue()) ));
-                                        }else if ( f.getType().isAssignableFrom(String.class) ){
-                                            f.set(obj, String.valueOf(entry.getValue())  );
-                                        }else if ( f.getType().isAssignableFrom(Integer.class) ){
-                                            f.set(obj,  Integer.valueOf( String.valueOf( entry.getValue()) ));
-                                        }else if ( f.getType().isAssignableFrom(Long.class) ){
-                                            f.set(obj,  Long.valueOf( String.valueOf( entry.getValue()) ));
-                                        }
+                                     
+                                        f.set(obj, parseValueIntoAllowedTypes(entry.getValue(), f.getType())   );
+
                                     }else if( f.isAnnotationPresent(JdbcIdentity.class) &&  entry.getKey().equals(f.getAnnotation(JdbcIdentity.class).value()) ) {
-                                            if ( f.getType().isAssignableFrom(Integer.class) ){
-                                                f.set(obj,  Integer.valueOf( String.valueOf( entry.getValue()) ));
-                                            }else if ( f.getType().isAssignableFrom(Long.class) ){
-                                                f.set(obj,  Long.valueOf( String.valueOf( entry.getValue()) ));
-                                            }
+                                 
+                                        f.set(obj, parseValueIntoAllowedTypes(entry.getValue(), f.getType())   );
                                     }else if( f.isAnnotationPresent(JdbcFkIdentity.class)   &&  entry.getKey().equals(f.getAnnotation(JdbcFkIdentity.class).value()) ) {
                                         
                                         f.setAccessible(true);
@@ -212,13 +202,8 @@ public abstract class CommandUtils {
                                             fFk.setAccessible(true);
 
                                             if (fFk.isAnnotationPresent(JdbcIdentity.class)){
-                                                if ( fFk.getType().isAssignableFrom(Integer.class) ){
-                                                    fFk.set(fkObj,  Integer.valueOf( String.valueOf( entry.getValue()) ));
-                                                    f.set(obj, fkObj);
-                                                }else if ( fFk.getType().isAssignableFrom(Long.class) ){
-                                                    fFk.set(fkObj,  Long.valueOf( String.valueOf( entry.getValue()) ));
-                                                    f.set(obj, fkObj);
-                                                }
+                                                fFk.set(fkObj, parseValueIntoAllowedTypes(entry.getValue(), fFk.getType())   );
+                                                f.set(obj, fkObj);
                                             }
                                         }
 
@@ -232,6 +217,28 @@ public abstract class CommandUtils {
         return classToReturn.cast(obj);
     }
 
+
+    @SuppressWarnings("unchecked")
+    private <T> T parseValueIntoAllowedTypes(  Object value , Class<T> typeCondition ){
+
+        if( typeCondition.isAssignableFrom(LocalDate.class)   ){
+            return (T)((Date) value).toLocalDate();
+        }else if ( typeCondition.isAssignableFrom(LocalDateTime.class) ){
+            return (T)((Timestamp) value).toLocalDateTime();
+        }else if (typeCondition.isAssignableFrom(Double.class) ){
+            return (T) Double.valueOf( String.valueOf( value));
+        }else if ( typeCondition.isAssignableFrom(Float.class) ){
+            return (T) Float.valueOf( String.valueOf( value));
+        }else if ( typeCondition.isAssignableFrom(String.class) ){
+            return (T) String.valueOf(value);
+        }else if ( typeCondition.isAssignableFrom(Integer.class) ){
+            return (T) Integer.valueOf( String.valueOf( value));
+        }else if ( typeCondition.isAssignableFrom(Long.class) ){
+            return (T) Long.valueOf( String.valueOf( value ) );
+        }else{
+            return typeCondition.cast(value);
+        }
+    }
 
 
     protected <T> T getSelectObjFromMap(Map<String, Object> mapObject , Class<T> classToReturn) throws Exception {
@@ -247,21 +254,7 @@ public abstract class CommandUtils {
                 
                                     f.setAccessible(true);
                                     if(  f.isAnnotationPresent(JdbcColumnSelect.class) &&  entry.getKey().equals(f.getAnnotation(JdbcColumnSelect.class).value())  ){
-                                        if( f.getType().isAssignableFrom(LocalDate.class)   ){
-                                            f.set(obj,  ((Date) entry.getValue()).toLocalDate() );
-                                        }else if ( f.getType().isAssignableFrom(LocalDateTime.class) ){
-                                            f.set(obj,  ((Timestamp) entry.getValue()).toLocalDateTime() );
-                                        }else if ( f.getType().isAssignableFrom(Double.class) ){
-                                            f.set(obj,  Double.valueOf( String.valueOf( entry.getValue()) ));
-                                        }else if ( f.getType().isAssignableFrom(Float.class) ){
-                                            f.set(obj,  Float.valueOf( String.valueOf( entry.getValue()) ));
-                                        }else if ( f.getType().isAssignableFrom(String.class) ){
-                                            f.set(obj, String.valueOf(entry.getValue())  );
-                                        }else if ( f.getType().isAssignableFrom(Integer.class) ){
-                                            f.set(obj,  Integer.valueOf( String.valueOf( entry.getValue()) ));
-                                        }else if ( f.getType().isAssignableFrom(Long.class) ){
-                                            f.set(obj,  Long.valueOf( String.valueOf( entry.getValue()) ));
-                                        }
+                                        f.set(obj, parseValueIntoAllowedTypes(entry.getValue(), f.getType())   );
                                     }
                             
                         }

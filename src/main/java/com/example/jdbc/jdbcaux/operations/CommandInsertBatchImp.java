@@ -44,7 +44,16 @@ public class CommandInsertBatchImp extends CommandUtils implements CommandBatch 
             Field[] fields = entity.getClass().getDeclaredFields();
     
             for (Field f : fields) {
-               if (f.isAnnotationPresent(JdbcColumn.class)) {
+                if(  f.isAnnotationPresent(JdbcIdentity.class) ){
+                    f.setAccessible(true);
+    
+                    if(  JdbcIdentity.NO_GENERATED_KEY.equals(f.getAnnotation(JdbcIdentity.class).typeKey())   ){
+                        jdbcModel.addParam(f.getAnnotation(JdbcIdentity.class).value() , f.get(entity));
+                        jdbcModel.addParamIdentity(f.getAnnotation(JdbcIdentity.class).value() , f.get(entity));
+                        jdbcModel.setTypeKey(JdbcIdentity.NO_GENERATED_KEY);
+                    }
+    
+                }else if (f.isAnnotationPresent(JdbcColumn.class)) {
                     f.setAccessible(true);
                     jdbcModel.addParam(f.getAnnotation(JdbcColumn.class).value() , f.get(entity));
     

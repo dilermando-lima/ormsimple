@@ -35,7 +35,16 @@ public class CommandInsertImp extends CommandUtils implements Command {
         Field[] fields = entity.getClass().getDeclaredFields();
 
         for (Field f : fields) {
-           if (f.isAnnotationPresent(JdbcColumn.class)) {
+            if(  f.isAnnotationPresent(JdbcIdentity.class) ){
+                f.setAccessible(true);
+
+                if(  JdbcIdentity.NO_GENERATED_KEY.equals(f.getAnnotation(JdbcIdentity.class).typeKey())   ){
+                    jdbcModel.addParam(f.getAnnotation(JdbcIdentity.class).value() , f.get(entity));
+                    jdbcModel.addParamIdentity(f.getAnnotation(JdbcIdentity.class).value() , f.get(entity));
+                    jdbcModel.setTypeKey(JdbcIdentity.NO_GENERATED_KEY);
+                }
+
+            }else if (f.isAnnotationPresent(JdbcColumn.class)) {
                 f.setAccessible(true);
                 jdbcModel.addParam(f.getAnnotation(JdbcColumn.class).value() , f.get(entity));
 
@@ -91,7 +100,7 @@ public class CommandInsertImp extends CommandUtils implements Command {
      
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
 
-     int inserted =  jdbcTemplate.update(con -> {
+     jdbcTemplate.update(con -> {
             PreparedStatement statement = con.prepareStatement(jdbcModel.getCommandBuilt(), Statement.RETURN_GENERATED_KEYS );
             for (String key : jdbcModel.getValues().keySet()) {
                 statement.setObject(jdbcModel.getPositions().get(key), jdbcModel.getValues().get(key));
@@ -99,7 +108,14 @@ public class CommandInsertImp extends CommandUtils implements Command {
             return statement;
     }, holder);
 
-        return inserted == 0 ?  typeReturn.cast(null) :  typeReturn.cast(holder.getKey().longValue());
+        if(  JdbcIdentity.NO_GENERATED_KEY.equals(jdbcModel.getTypeKey())  ){
+            return typeReturn.cast(jdbcModel.getValueIdentity());
+        }else{
+            return holder.getKeyAs(typeReturn);
+        }
+
+        
+        
     }
     
     
