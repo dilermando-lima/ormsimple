@@ -1,6 +1,6 @@
 ### About this project
 A simple way to persist data into a database with  [jdbc-template from spring](https://spring.io/guides/gs/relational-data-access/) in a spring boot project. <br>
-All core of this project are in [src/main/java/com/example/jdbc/jdbcaux](https://github.com/dilermando-lima/jdbc-template-easy/tree/master/src/main/java/com/example/jdbc/jdbcaux)
+All core of this project are in [src/main/java/com/example/jdbc/jdbc](https://github.com/dilermando-lima/jdbc-template-easy/tree/master/src/main/java/com/example/jdbc/jdbc)
 
 
 ### Import dependency spring-boot-starter-jdbc
@@ -14,164 +14,213 @@ Import `spring-boot-starter-jdbc` in your *pom.xml*
   </dependency>
  ```
 
-
-### Create your entity to persist
-All entity needs to have the **3 annotations** bellow and have at least a **default constructor**:
-
-* ###### *@JdbcTable("name_table_on_database")*
-* ###### *@JdbcIdentity("name_column_id_on_database")*
-* ###### *@JdbcColumn("name_any_column_to_insert_update")*
-* ###### *@JdbcColumnSelect("name_any_column_to_read")*
-
-*All atributes without these annotations will be ignored on persisting*
-
+### Mapping entities
 
 ```java
-@JdbcTable("my_entity")
-public class MyEntity {
+import com.example.jdbc.jdbc.annotation.Col;
+import com.example.jdbc.jdbc.annotation.ColSelect;
+import com.example.jdbc.jdbc.annotation.Id;
+import com.example.jdbc.jdbc.annotation.Table;
 
-    public MyEntity(){}
-    
-    public MyEntity(String name, String obs) {
-        this.name = name;
-        this.obs = obs;
-    }
-    
-    @JdbcColumnSelect("id")
-    @JdbcIdentity("id")
-    private String id;
-    
-    @JdbcColumnSelect("name")
-    @JdbcColumn("name")
+@Table("person")
+public class Person {
+
+    @ColSelect("id")
+    @Id("id")
+    private Long id;
+
+    @ColSelect("name")
+    @Col("name")
     private String name;
-    
-    @JdbcColumnSelect("obs")
-    @JdbcColumn("obs")
+
+    @ColSelect("obs")
+    @Col("obs")
     private String obs;
+
+    @ColSelect("date_insert")
+    @Col("date_insert")
+    private LocalDateTime dateInsert;
     
     // setters and getters...
    
 }
 
+
+import com.example.jdbc.jdbc.annotation.Col;
+import com.example.jdbc.jdbc.annotation.ColSelect;
+import com.example.jdbc.jdbc.annotation.Fk;
+import com.example.jdbc.jdbc.annotation.Id;
+import com.example.jdbc.jdbc.annotation.Table;
+
+@Table("contact")
+public class Contact {
+
+    @ColSelect("id")
+    @Id("id")
+    private Long id;
+
+    @ColSelect("phone")
+    @Col("phone")
+    private String phone;
+
+    @ColSelect("id_person")
+    @Fk("id_person")
+    private Person person;
+
+
 ```
 
-### Create your repository class to persist
-We need to extend repostitories from *`com.example.jdbc.jdbcaux.repository.JdbcRepository`*:<br> 
-* *extends JdbcRepository< `YOUR_CLASS_ENTITY` ,`TYPE_OF_ATTR_ID` , `CLASS_DATA_BASE` >*
+### Testing Commands
 
 
 ```java
 
-  import com.example.jdbc.jdbcaux.model.DataBaseMySql;
-  import com.example.jdbc.jdbcaux.repository.JdbcRepository;
-
-  import org.springframework.stereotype.Component;
-
-  @Component
-  public class MyEntitynRepository extends  JdbcRepository<MyEntity,Long, DataBaseMySql>  {
-  }
-
-```
-
-## That is it! :)
-Let's see how this work...
-
-#### Inserting a entity
-
-```java
-
-  repository.insert(new MyEntity("some name","some comments"));
-
-```
-
-#### Updating a entity
-
-```java
-
-  myEntity.setId(2);
-  repository.update(myEntity);
-
-```
-
-#### Updating patch a entity
-
-```java
-
-  HashMap<String,Object> mapAttrToUpdate =  new HashMap<>();
-  mapAttrToUpdate.put("name", "name to update");
-  mapAttrToUpdate.put("other_attr_to_update", "value to update");
-
-  repository.updatePatch(new MyEntity(), mapAttrToUpdate);
-
-```
 
 
+	/* ======== INSERTING DATA ============================*/
 
-#### Getting by id
+		// return void
+		repository.insert(new Person("name person 1", "obs 1", LocalDateTime.now()));
+		
+		// return inserted entity
+		Person personInserted = repository.insert(
+						new Person("name person 2", "obs 2", LocalDateTime.now()), 
+						Person.class, 
+						false);
 
-```java
+		// return inserted entity with no related entities
+		Contact contact1 = repository.insert(
+							new Contact("999990001", personInserted), 
+							Contact.class, 
+							false); // false: with no related entities.
+		// { id: 1, phone: 999990001, person: { id: 2, name: null , obs: null, date_insert: null }  } 
+		
 
-  myEntity.setId(2);
-  MyEntity = repository.getById(myEntity);
+		// return inserted entity with no related entities
+		Contact contact2 = repository.insert(
+			new Contact("999990002", personInserted), 
+			Contact.class, 
+			true);  // true: will bring related entities.
 
-```
+		// { id: 2, phone: 999990002, person: { id: 2, name: name person 2 , obs: obs 2, date_insert: 2020-12-07T23:20:03 }  }
+		
 
-#### Simple select
-In order to bring data on select your attributes need to have *@JdbcColumnSelect("name_in_database")*
+		// inserting a list of entities
+		repository.insertBatch(Contact.class, 
+				Arrays.asList(
+					new Contact("999990003", personInserted),
+					new Contact("999990004", personInserted),
+					new Contact("999990005", personInserted)
+				)
+		);
 
-```java
 
-  int numPage = 0; /* will bring the first page */
-  int numPageSize = 1000;  /* will bring 1000 rows at the first page */
-  
-	Select select = new Select(numPage, numPageSize) 
-                      .col("name")
-                      .col("obs")
-                      .from("my_entity")
-                      .orderBy("id", Select.ASC);
+	/* ======== UPDATE DATA ============================*/
 
-  List<MyEntity> listMyEntity = repository.select(select);
 
-```
+		// updating return void
+		Person personToUpdate = new Person(1l, "name updated 1", "obs updated 1", LocalDateTime.now());
+		repository.updateEntity(personToUpdate);
 
 
 
-#### Select with inners and where
+		// updating return entity updated with related entities
+		Contact contactUpdated = repository.updateEntity(
+									 new Contact(1l, "phone_updated", personInserted),
+									 Contact.class,
+									 true);
 
-```java
-
-  Select select = new Select(0, 1000)
-                    .col("id","name","obs")
-                    .from("my_entity")
-                    .innerJoin("other_entity", "id", "id")
-                    .andWhere(" name = ? ","some name filter")
-                    .orderBy("id", Select.ASC);
-                        
-  List<MyEntity> listMyEntity = repository.select(select);
-
-```
-
-#### More about select
-
-```java
-
-  Select select = new Select(0, 1000)
-                    .col("id","name","obs")
-                    .from("my_entity")
-                    .orderBy("id", Select.ASC);
+		//{ id: 1, phone: phone_updated, person: { id: 2, name: name person 2 , obs: obs 2, date_insert: 2020-12-07T23:35:22 }  
 
 
-  if(  addInfoFromOtherEntity  ){
-        select.col("other_entity.name")
-              .innerJoin("other_entity", "id", "id");
-  }
+	/* ======== CUSTOMIZED UPDATE DATA ============================*/
+		// update on script udpate
+		Update update = new Update(" update person set name = 'name updated 3' where id = 1 ");
+		repository.update(update);
+
+		// update on script udpate with parameters
+		update = new Update(" update person set name = ? where name = ? and obs like ? ", 
+								"nameToUpdate", 		// param ? 1
+								"nameToSearch", 		// param ? 2
+								"%containsThisObs%" ); 	// param ? 3
+		repository.update(update);
 
 
-  if(  addFilterName  ){
-        select.andWhere(" name = ? ", valueToFilterName);
-  }
+		// TODO: CREATE UPDATE PATCH
 
-  List<MyEntity> listMyEntity = repository.select(select);
+		/* ============ SELECT =======================*/
+		
+		// select by id
+		Person p = repository.selectById(
+								1l, // new Person(1l), // will work too
+								Person.class, 
+								true);
+
+
+		// select a list of entity
+		Select select =  new Select("select * from person");	
+		List<Contact> listOfContact = repository.selectEntity(
+											Contact.class, 
+											false, 
+											select);
+		
+
+
+		// selet with conditions
+		Select selectWithWhere = new Select("select id, phone, id_person from contact where phone like ? ", "%phoneToSearch%");
+		List<Contact> listOfContactWithWhere = repository.selectEntity(
+											Contact.class, 
+											true, // will bring person nested in id_person attr
+											selectWithWhere);
+		
+
+		// selet returning one value. That's good for counts and specific values
+		Select selectOneValue = new Select("select name from person where id = ?",1);
+		String nameFromPersonId1 = repository.selectOneVal(String.class, selectOneValue);
+		
+
+
+		// selet only the fist one
+		Select selectGetFirstOneEntity = new Select("select * from contact where phone like ? order by id desc", "%phoneToSearch%");
+		Contact contact = repository.selectFirstOne(Contact.class, selectGetFirstOneEntity);
+
+		
+
+
+		/* ============ CUSTOMIZED SELECT  =======================*/
+
+		boolean containsSomeCondition = true;
+		boolean addSomePagination = true;
+		boolean addSomeOrderBy = true;
+
+		SelectCustom selectCustom = new SelectCustom()
+										.col("id","name")
+										.from("person");
+
+		if( containsSomeCondition   ){ // if will need add conditions
+			selectCustom.col("obs")
+						.andWhere(" obs = ? ","valueObsToSearch")
+						.andWhere(" obs like ? and obs like ?   ","%param1%"  ,"%param2%"  );
+		}
+
+		if(  addSomeOrderBy  ){ // if will need add orderby
+			selectCustom.orderBy("id", SelectCustom.ASC)
+						.orderBy("name", SelectCustom.DESC);
+		}
+
+		if(  addSomePagination  ){ // if will need add limits and off set
+
+			int pageSize = 10; // take 10 rows
+			int numPage = 0; // take the fist pagination
+			selectCustom.setPagination(String.format(" limit %d  offset %d ", pageSize, numPage * pageSize )); // MYSQL
+		//	selectCustom.setPagination(String.format(" offset %d  rows fetch next %d rows only ", numPage, pageSize )); // SQLSERVER
+
+		}
+
+
+		List<Person> listPerson =  repository.select(Person.class, selectCustom);
+
+
 
 ```
 

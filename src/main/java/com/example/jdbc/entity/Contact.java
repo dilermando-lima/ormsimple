@@ -1,30 +1,30 @@
 package com.example.jdbc.entity;
 
-import com.example.jdbc.jdbcaux.annotations.JdbcColumn;
-import com.example.jdbc.jdbcaux.annotations.JdbcFkIdentity;
-import com.example.jdbc.jdbcaux.annotations.JdbcIdentity;
-import com.example.jdbc.jdbcaux.annotations.JdbcTable;
+import com.example.jdbc.jdbc.annotation.Col;
+import com.example.jdbc.jdbc.annotation.ColSelect;
+import com.example.jdbc.jdbc.annotation.Fk;
+import com.example.jdbc.jdbc.annotation.Id;
+import com.example.jdbc.jdbc.annotation.Table;
 
-@JdbcTable("contact")
+@Table("contact")
 public class Contact {
 
-   @JdbcIdentity("id")
+    @ColSelect("id")
+    @Id("id")
     private Long id;
 
-    @JdbcColumn("email")
-    private String email;
-
-    @JdbcColumn("phone")
+    @ColSelect("phone")
+    @Col("phone")
     private String phone;
 
-    @JdbcFkIdentity("id_person")
+    @ColSelect("id_person")
+    @Fk("id_person")
     private Person person;
 
     @Override
     public String toString() {
-        return String.format("{ id: %s, email: %s , phone: %s, id_person: %s } ", this.id, this.email, this.phone, this.person);
+        return String.format("{ id: %s, phone: %s, person: %s } ", this.id, this.phone, this.person);
     }
-
 
     public Contact(){}
 
@@ -32,9 +32,13 @@ public class Contact {
         this.id = id;
     }
 
-    public Contact(Long id, String email, String phone, Person person) {
+    public Contact(Long id, String phone, Person person) {
         this.id = id;
-        this.email = email;
+        this.phone = phone;
+        this.person = person;
+    }
+
+    public Contact( String phone, Person person) {
         this.phone = phone;
         this.person = person;
     }
@@ -45,14 +49,6 @@ public class Contact {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPhone() {
@@ -70,6 +66,8 @@ public class Contact {
     public void setPerson(Person person) {
         this.person = person;
     }
+
+    
 
     
     

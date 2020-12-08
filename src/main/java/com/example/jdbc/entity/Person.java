@@ -2,32 +2,30 @@ package com.example.jdbc.entity;
 
 import java.time.LocalDateTime;
 
-import com.example.jdbc.jdbcaux.annotations.JdbcColumn;
-import com.example.jdbc.jdbcaux.annotations.JdbcColumnSelect;
-import com.example.jdbc.jdbcaux.annotations.JdbcIdentity;
-import com.example.jdbc.jdbcaux.annotations.JdbcTable;
+import com.example.jdbc.jdbc.annotation.Col;
+import com.example.jdbc.jdbc.annotation.ColSelect;
+import com.example.jdbc.jdbc.annotation.Id;
+import com.example.jdbc.jdbc.annotation.Table;
 
 
-
-@JdbcTable("person")
+@Table("person")
 public class Person {
 
-    @JdbcColumnSelect("id")
-    @JdbcIdentity( value = "id", typeKey = JdbcIdentity.NO_GENERATED_KEY)
-    private String id;
+    @ColSelect("id")
+    @Id("id")
+    private Long id;
 
-    @JdbcColumnSelect("name")
-    @JdbcColumn("name")
+    @ColSelect("name")
+    @Col("name")
     private String name;
 
-    @JdbcColumnSelect("obs")
-    @JdbcColumn("obs")
+    @ColSelect("obs")
+    @Col("obs")
     private String obs;
 
-    @JdbcColumnSelect("date_insert")
-    @JdbcColumn("date_insert")
+    @ColSelect("date_insert")
+    @Col("date_insert")
     private LocalDateTime dateInsert;
-
 
     @Override
     public String toString() {
@@ -36,21 +34,28 @@ public class Person {
 
     public Person(){}
 
-    public Person(String id) {
+    public Person(Long id) {
         this.id = id;
     }
 
-    public Person(String name, String obs, LocalDateTime dateInsert) {
+    public Person(Long id, String name, String obs, LocalDateTime dateInsert) {
+        this.id = id;
         this.name = name;
         this.obs = obs;
         this.dateInsert = dateInsert;
     }
 
-    public String getId() {
+    public Person( String name, String obs, LocalDateTime dateInsert) {
+        this.name = name;
+        this.obs = obs;
+        this.dateInsert = dateInsert;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
