@@ -138,7 +138,6 @@ import org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServlet
 
 
 
-
 @EnableAutoConfiguration(exclude={
 	
 		ActiveMQAutoConfiguration.class,
@@ -283,18 +282,14 @@ public class RunningAndSomeExamplesApplication implements CommandLineRunner {
 		repository.exec( createTablePersonStript );
 		repository.exec( createTableContactStript );
 
-			/* insert a list entity in batch */
-			List<Person> listPersonsTestRowback =  new ArrayList<Person>();
-			listPersonsTestRowback.add(new Person("name sdfasd asdf asdfa sdfasdf asdfasdfa sdfasdf asdfasdfasdfasdfasdfasdfasdfa sdfasdfasddfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfafasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf", LocalDateTime.now()));
-			listPersonsTestRowback.add(new Person("name", LocalDateTime.now()));
-			listPersonsTestRowback.add(new Person("name", LocalDateTime.now()));
-
-			
-			repository.insertBatch(Person.class, listPersonsTestRowback);
-
-			return;
-
-	} public void teste() throws Exception {
+		/* insert a list entity in batch */
+		/*List<Person> listPersonsTestRowback =  new ArrayList<Person>();
+		listPersonsTestRowback.add(new Person("name sdfasd asdf asdfa sdfasdf asdfasdfa sdfasdf asdfasdfasdfasdfasdfasdfasdfa sdfasdfasddfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfafasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf", LocalDateTime.now()));
+		listPersonsTestRowback.add(new Person("name", LocalDateTime.now()));
+		listPersonsTestRowback.add(new Person("name", LocalDateTime.now()));
+		repository.insertBatch(Person.class, listPersonsTestRowback); 
+		return; } public void teste() throws Exception { */
+		
 
 	/* ======== INSERT  ============================*/
 
