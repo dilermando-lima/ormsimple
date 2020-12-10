@@ -18,7 +18,6 @@ public class JdbcRepository {
    @Autowired
    private JdbcTemplate jdbcTemplate;
 
-   // OK
    public void insert(Object entity ) throws Exception {
          new CommandInsert().doCommand(entity.getClass(), entity, jdbcTemplate, null );
    }

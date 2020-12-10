@@ -34,6 +34,7 @@ public class CommandInsertBatch extends Build {
                     ); 
     }
 
+
     public int []  doCommand( Class<?> classEntity,List<?> entities, JdbcTemplate jdbcTemplate ) throws Exception {
         
         if( entities == null || entities.isEmpty() )  throw new Exception("List entities cannot be empty on insertBatch");

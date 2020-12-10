@@ -271,7 +271,7 @@ public class RunningAndSomeExamplesApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-	
+
 		
 	/* ========= CREATING TABLES ================================== */
 		String deleteTablePerson =  " drop table if exists person " ;
@@ -282,6 +282,19 @@ public class RunningAndSomeExamplesApplication implements CommandLineRunner {
 		repository.exec( deleteTableContact );
 		repository.exec( createTablePersonStript );
 		repository.exec( createTableContactStript );
+
+			/* insert a list entity in batch */
+			List<Person> listPersonsTestRowback =  new ArrayList<Person>();
+			listPersonsTestRowback.add(new Person("name sdfasd asdf asdfa sdfasdf asdfasdfa sdfasdf asdfasdfasdfasdfasdfasdfasdfa sdfasdfasddfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfa sdfasdfasdfasdfasdfasdfasdfafasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfadfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf", LocalDateTime.now()));
+			listPersonsTestRowback.add(new Person("name", LocalDateTime.now()));
+			listPersonsTestRowback.add(new Person("name", LocalDateTime.now()));
+
+			
+			repository.insertBatch(Person.class, listPersonsTestRowback);
+
+			return;
+
+	} public void teste() throws Exception {
 
 	/* ======== INSERT  ============================*/
 
@@ -468,10 +481,25 @@ public class RunningAndSomeExamplesApplication implements CommandLineRunner {
 					selectDinam);
 
 
-					System.out.println(listDinamicSelect);
 
+		// testing performance - 166/s
+		/*System.out.print("start 1 - ");
+		System.out.println( LocalDateTime.now());
+		for (int i = 0; i < 10000; i++) {
+			repository.insert(new Person("name" + i, LocalDateTime.now()));
+		}
+		System.out.print("  end 1 - ");	
+		System.out.println( LocalDateTime.now());	
 
-						
+		List<Person> listToTestPerfm = new ArrayList<>();
+		System.out.print("start 2 - ");
+		System.out.println( LocalDateTime.now());	
+		for (int i = 0; i < 10000; i++) {
+			listToTestPerfm.add(new Person("name" + i, LocalDateTime.now()));
+		}
+		repository.insertBatch(Person.class , listToTestPerfm);
+		System.out.print("  end 2 - ");
+		System.out.println( LocalDateTime.now());	 */
 		
 	} 
 

@@ -253,38 +253,38 @@ We need to import JdbcRepository.class to use commands to alter and read data.
 								
 
 // dinamic select
-boolean containsSomeCondition = true;
-boolean addSomePagination = true;
-boolean addSomeOrderBy = true;
+	boolean containsSomeCondition = true;
+	boolean addSomePagination = true;
+	boolean addSomeOrderBy = true;
 
-SelectCustom selectDinam = 
-	new SelectCustom()
-		.col("id","name")
-		.from("person");
-				
-if( containsSomeCondition   ){ // if will need add conditions
-	selectDinam
-		.col("obs")
-		.andWhere(" obs = ? ","valueObsToSearch")
-		.andWhere(" obs like ? and obs like ?   ","%param1%"  ,"%param2%"  );
-}
+	SelectCustom selectDinam = 
+		new SelectCustom()
+			.col("id","name")
+			.from("person");
+					
+	if( containsSomeCondition   ){ // if will need add conditions
+		selectDinam
+			.col("obs")
+			.andWhere(" obs = ? ","valueObsToSearch")
+			.andWhere(" obs like ? and obs like ?   ","%param1%"  ,"%param2%"  );
+	}
 
-if(  addSomeOrderBy  ){ // if will need add orderby
-	selectDinam.orderBy("id", SelectCustom.ASC);
-}
+	if(  addSomeOrderBy  ){ // if will need add orderby
+		selectDinam.orderBy("id", SelectCustom.ASC);
+	}
 
-if(  addSomePagination  ){ // if will need add limits and off set
+	if(  addSomePagination  ){ // if will need add limits and off set
 
-	int pageSize = 10; // take 10 rows
-	int numPage = 0; // take the fist pagination
-	selectDinam.setPagination(String.format(" limit %d  offset %d ", pageSize, numPage * pageSize )); // MYSQL
-	//	selectCustom.setPagination(String.format(" offset %d  rows fetch next %d rows only ", numPage, pageSize )); // SQLSERVER
-}
+		int pageSize = 10; // take 10 rows
+		int numPage = 0; // take the fist pagination
+		selectDinam.setPagination(String.format(" limit %d  offset %d ", pageSize, numPage * pageSize )); // MYSQL
+		//	selectCustom.setPagination(String.format(" offset %d  rows fetch next %d rows only ", numPage, pageSize )); // SQLSERVER
+	}
 
-List<Person> listDinamicSelect = 
-		repository.select(
-			Person.class, 
-			selectDinam);
+	List<Person> listDinamicSelect = 
+			repository.select(
+				Person.class, 
+				selectDinam);
 
 
 ```
