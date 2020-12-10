@@ -25,7 +25,7 @@ public class CommandSelectListCustom extends Build {
 
     public <T> List<T>  doCommand( SelectCustom select, JdbcTemplate jdbcTemplate, Class<T> classReturn, boolean takeNested ) throws Exception {
         
-        validateAnnotationsEntity(classReturn);
+
         buildModel(classReturn, select);
         buildCommand(select);
 
@@ -44,7 +44,7 @@ public class CommandSelectListCustom extends Build {
         
         List<T> listReturn = new ArrayList<T>();
         for (Map<String,Object> map : listMapReturn) {
-            listReturn.add( getObjFromMapSelect(map, classReturn , takeNested , !takeNested ? null : jdbcTemplate));
+            listReturn.add( getObjFromMapSelect(map, classReturn ,   takeNested, !takeNested ? null : jdbcTemplate));
         }
 
         return listReturn;

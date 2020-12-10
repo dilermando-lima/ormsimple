@@ -49,7 +49,7 @@ public class SelectCustom {
 
             if( containsWhere  ) where = " where " + where;
 
-            built+= String.format(" select %s from %s %s %s %s %s",cols,table, inners, where, orderBy, pagination );
+            built = String.format(" select %s from %s %s %s %s %s",cols,table, inners, where, orderBy, pagination );
 
             JdbcUtils.validateSelectSql(built);
 
@@ -105,7 +105,7 @@ public class SelectCustom {
 
 
     public SelectCustom andWhere(String whereand){
-        return andWhere(whereand);
+        return andWhere(whereand, new Object[]{});
     }
 
     public SelectCustom andWhere(String whereand ,   Object... ObjParam){
@@ -133,7 +133,7 @@ public class SelectCustom {
     }
 
     public SelectCustom orWhere(String whereand){
-        return orWhere(whereand);
+        return orWhere(whereand,new Object[]{});
     }
     
     public SelectCustom orWhere(String whereor ,   Object... ObjParam){

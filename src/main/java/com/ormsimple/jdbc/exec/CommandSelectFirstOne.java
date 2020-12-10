@@ -24,7 +24,7 @@ public class CommandSelectFirstOne extends Build {
 
     public <T> T  doCommand( Select select, JdbcTemplate jdbcTemplate, Class<T> classReturn, boolean takeNested ) throws Exception {
         
-        validateAnnotationsEntity(classReturn);
+       
         buildModel(classReturn, select);
         buildCommand(select);
 

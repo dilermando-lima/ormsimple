@@ -1,20 +1,20 @@
 package com.ormsimple.entity;
 
-import com.ormsimple.jdbc.annotation.Col;
+import com.ormsimple.jdbc.annotation.ColSelect;
 
 
 public class ContactAndPersonExampleView {
     
-    @Col("id_person")
+    @ColSelect("id_person")
     private Long idPerson;
 
-    @Col("id_contact")
+    @ColSelect("id_contact")
     private Long idContact;
 
-    @Col("name_person")
+    @ColSelect("name_person")
     private String name;
 
-    @Col("phone")
+    @ColSelect("phone")
     private String phone;
 
 

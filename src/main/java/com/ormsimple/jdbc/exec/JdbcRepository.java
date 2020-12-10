@@ -101,7 +101,7 @@ public class JdbcRepository {
 
    }
 
-   public <E> List<E> selectEntity(Class<E> classEntity, boolean takeNested, Select select ) throws Exception{
+   public <E> List<E> selectEntity(Class<E> classEntity,Select select,  boolean takeNested ) throws Exception{
          return new CommandSelectList().doCommand(select, jdbcTemplate, classEntity, takeNested);
    }
 
@@ -109,8 +109,8 @@ public class JdbcRepository {
       return new CommandSelectListCustom().doCommand(select, jdbcTemplate, classEntity, false);
    }
 
-   public <E> E selectFirstOne(Class<E> classEntity, Select select ) throws Exception{
-      return new CommandSelectFirstOne().doCommand(select, jdbcTemplate, classEntity, false);
+   public <E> E selectFirstOne(Class<E> classEntity, Select select,  boolean takeNested ) throws Exception{
+      return new CommandSelectFirstOne().doCommand(select, jdbcTemplate, classEntity, takeNested);
    }
 
    public <E> E selectOneVal(Class<E> classReturn, Select select ) throws Exception{

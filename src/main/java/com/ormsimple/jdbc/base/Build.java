@@ -98,7 +98,7 @@ public abstract class Build extends Validate {
 
     protected Model buildModelFromSelectCustom(Class<?> classEntity, SelectCustom select) throws Exception{
         Model model = new Model();
-        if(  classEntity != null  ){
+        if(  classEntity != null &&  classEntity.isAnnotationPresent(Table.class) ){
             model.setTable(classEntity.getAnnotation(Table.class).value());
         }
         for (Object obj : select.getListValues()) {
@@ -109,7 +109,7 @@ public abstract class Build extends Validate {
 
     protected Model buildModelFromSelect(Class<?> classEntity, Select select) throws Exception{
         Model model = new Model();
-        if(  classEntity != null  ){
+        if(   classEntity != null &&  classEntity.isAnnotationPresent(Table.class)  ){
             model.setTable(classEntity.getAnnotation(Table.class).value());
         }
         for (Object obj : select.getListValues()) {
@@ -120,7 +120,7 @@ public abstract class Build extends Validate {
 
     protected Model buildModelFromUpdate(Class<?> classEntity, Update update) throws Exception{
         Model model = new Model();
-        if(  classEntity != null  ){
+        if(   classEntity != null &&  classEntity.isAnnotationPresent(Table.class)   ){
             model.setTable(classEntity.getAnnotation(Table.class).value());
         }
         for (Object obj : update.getListValues()) {
@@ -131,7 +131,7 @@ public abstract class Build extends Validate {
 
     protected Model buildModelFromDelete(Class<?> classEntity, Delete delete) throws Exception{
         Model model = new Model();
-        if(  classEntity != null  ){
+        if(  classEntity != null &&  classEntity.isAnnotationPresent(Table.class)   ){
             model.setTable(classEntity.getAnnotation(Table.class).value());
         }
         for (Object obj : delete.getListValues()) {

@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ormsimple.entity.Contact;
+import com.ormsimple.entity.ContactAndPersonExampleView;
 import com.ormsimple.entity.Person;
 import com.ormsimple.jdbc.exec.JdbcRepository;
 import com.ormsimple.jdbc.model.Select;
+import com.ormsimple.jdbc.model.SelectCustom;
 import com.ormsimple.jdbc.model.Update;
 import com.ormsimple.jdbc.model.UpdatePatch;
 
@@ -346,10 +348,10 @@ public class RunningAndSomeExamplesApplication implements CommandLineRunner {
 
 
 		/* delete entity */
-		repository.deleteEntity(new Person(1l));
+		repository.deleteEntity(new Person(5l));
 
 		/* delete entity */
-		Long idPersonDeleted = repository.deleteEntity(new Person(2l), Long.class);
+		Long idPersonDeleted = repository.deleteEntity(new Person(5l), Long.class);
 		
 
 
@@ -366,10 +368,12 @@ public class RunningAndSomeExamplesApplication implements CommandLineRunner {
 				
 				List<Contact> listOfContact = repository.selectEntity(
 								Contact.class, 
-								true, 
-								select);
+								select,
+								true
+								);
 
-								System.out.println(listOfContact);
+
+							
 
 			// selet with conditions
 				Select selectWithWhere = 
@@ -378,17 +382,96 @@ public class RunningAndSomeExamplesApplication implements CommandLineRunner {
 				List<Contact> listOfContactWithWhere = 
 					repository.selectEntity(
 						Contact.class, 
-						true, // will bring person nested in id_person attr
-						selectWithWhere);
-
-				
-					
+						selectWithWhere,
+						true // will bring person nested in id_person attr
+					);
 
 
+			// select the fisrt entity 
+			Contact contact = repository.selectFirstOne(
+								Contact.class, 
+								new Select("select * from contact where id = 2"),
+								true);
 
-		
+			// select one value
+			LocalDateTime localDateTime = repository.selectOneVal(
+									LocalDateTime.class, 
+									new Select("select date_insert from person where id = 1")			
+								);
+
+			// select one value in count example
+			Long count = repository.selectOneVal(
+							Long.class, 
+									new Select("select count(1) from person")			
+								);
 
 
+			// select custom
+			SelectCustom selectCustom = new SelectCustom().col(" id, name ").from("person");
+			List<Person> listPersonCust = repository.select(Person.class, selectCustom);
+
+			// select custom with where
+			SelectCustom selectCustomWithWhere = 
+				new SelectCustom()
+						.col(" id, name ")
+						.from("person")
+						.andWhere("id = 1")
+						.andWhere(" name = ? ","nameToSearch");
+			List<Person> listPersonCustWithWhere = repository.select(Person.class, selectCustomWithWhere);
+
+			// select custom with inner join
+			SelectCustom selectCustomWithInner = 
+				new SelectCustom()
+						.col(" person.id as id_person")
+						.col(" contact.id as id_contact")
+						.col(" person.name as name_person")
+						.col(" contact.phone as phone")
+						.from("person")
+						.innerJoin("contact", "contact.id", "person.id")
+						.orderBy("person.name", SelectCustom.ASC);
+			List<ContactAndPersonExampleView> listPersonCustWithInnerJoin = 
+					repository.select(
+								ContactAndPersonExampleView.class, 
+								selectCustomWithInner);
+								
+
+			// dinamic select
+		boolean containsSomeCondition = true;
+		boolean addSomePagination = true;
+		boolean addSomeOrderBy = true;
+		SelectCustom selectDinam = new SelectCustom()
+										.col("id","name")
+										.from("person");
+						
+		if( containsSomeCondition   ){ // if will need add conditions
+			selectDinam.col("obs")
+						.andWhere(" obs = ? ","valueObsToSearch")
+						.andWhere(" obs like ? and obs like ?   ","%param1%"  ,"%param2%"  );
+		}
+
+		if(  addSomeOrderBy  ){ // if will need add orderby
+			selectDinam.orderBy("id", SelectCustom.ASC);
+		}
+
+		if(  addSomePagination  ){ // if will need add limits and off set
+
+			int pageSize = 10; // take 10 rows
+			int numPage = 0; // take the fist pagination
+			selectDinam.setPagination(String.format(" limit %d  offset %d ", pageSize, numPage * pageSize )); // MYSQL
+			//	selectCustom.setPagination(String.format(" offset %d  rows fetch next %d rows only ", numPage, pageSize )); // SQLSERVER
+
+		}
+
+		List<Person> listDinamicSelect = 
+				repository.select(
+					Person.class, 
+					selectDinam);
+
+
+					System.out.println(listDinamicSelect);
+
+
+						
 		
 	} 
 

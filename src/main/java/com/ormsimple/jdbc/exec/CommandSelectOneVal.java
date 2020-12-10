@@ -23,8 +23,7 @@ public class CommandSelectOneVal extends Build {
     }
 
     public <T> T  doCommand( Select select, JdbcTemplate jdbcTemplate, Class<T> classReturn ) throws Exception {
-        
-        // validateAnnotationsEntity(classReturn); it is not gonna checked this.
+
         buildModel( select);
         buildCommand(select);
 
